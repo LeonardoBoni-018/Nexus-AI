@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: nexus-ai
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/nexus}
+    username: ${DB_USER:nexus}
+    password: ${DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          batch_size: 50
+        order_inserts: true
+  flyway:
+    enabled: true
+  jackson:
+    default-property-inclusion: non_null
+  threads:
+    virtual:
+      enabled: false
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-stacktrace: never
+    include-message: never
+  servlet:
+    session:
+      timeout: 8h
+      cookie:
+        http-only: true
+        secure: ${COOKIE_SECURE:true}
+        same-site: lax
+        name: NEXUSSESSION
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+  metrics:
+    tags:
+      application: nexus-ai
+
+springdoc:
+  api-docs:
+    enabled: ${OPENAPI_ENABLED:false}
+  swagger-ui:
+    enabled: ${OPENAPI_ENABLED:false}
+
+app:
+  timezone: America/Sao_Paulo
+  registration-enabled: ${REGISTRATION_ENABLED:false}
+  cors-allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  demo-seed: ${DEMO_SEED:false}
+  max-query-days: 400
+  ai:
+    provider: ${AI_PROVIDER:}          # anthropic | openai (compativel com OpenAI)
+    model: ${AI_MODEL:}
+    api-key: ${AI_API_KEY:}
+    base-url: ${AI_BASE_URL:}
+    max-tool-calls: ${AI_MAX_TOOL_CALLS:8}
+    request-timeout: ${AI_REQUEST_TIMEOUT:60s}
+    max-output-tokens: ${AI_MAX_OUTPUT_TOKENS:2048}
+    max-conversation-history: ${AI_MAX_CONVERSATION_HISTORY:20}
+    rate-limit-per-minute: ${AI_RATE_LIMIT_PER_MINUTE:20}
+
+logging:
+  pattern:
+    console: "%d{ISO8601} %-5level [%X{requestId:-}] %logger{36} - %msg%n"

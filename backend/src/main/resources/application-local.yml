@@ -1,0 +1,22 @@
+# Perfil local sem Docker: H2 em modo PostgreSQL (arquivo ./data). Nao usar em producao.
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/nexus;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password: ""
+
+server:
+  servlet:
+    session:
+      cookie:
+        secure: false
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+app:
+  registration-enabled: true
+  demo-seed: true
