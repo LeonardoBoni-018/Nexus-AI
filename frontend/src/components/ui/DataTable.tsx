@@ -24,7 +24,7 @@ export function DataTable<T>({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[560px] text-sm">
+      <table className="w-full min-w-[360px] text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead>
           <tr className="border-b border-line text-xs text-ink-3">

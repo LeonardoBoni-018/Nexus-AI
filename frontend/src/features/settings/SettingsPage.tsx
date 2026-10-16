@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Badge, Card, CardHeader, PageHeader } from '@/components/ui/primitives'
 import { api } from '@/lib/api/client'
-import { useAuth } from '@/lib/auth/AuthContext'
+import { useAuth } from '@/lib/auth/auth-context'
 import type { AiStatus } from '@/lib/api/types'
 
 const ROLE_HELP: Record<string, string> = {

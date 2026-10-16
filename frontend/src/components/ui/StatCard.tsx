@@ -2,7 +2,10 @@ import clsx from 'clsx'
 import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react'
 import { formatPercent } from '@/lib/formatting'
 
-/** KPI com variacao. Variacao nula = sem base de comparacao (nunca exibimos um numero inventado). */
+/**
+ * Entrada de livro-razao: numero grande, regra lateral, variacao.
+ * Variacao nula = sem base de comparacao (nunca exibimos um numero inventado).
+ */
 export function StatCard({
   label,
   value,
@@ -16,12 +19,12 @@ export function StatCard({
 }) {
   const Icon = variation == null || variation === 0 ? Minus : variation > 0 ? ArrowUpRight : ArrowDownRight
   return (
-    <div className="rounded-xl border border-line bg-surface p-4">
-      <p className="text-xs font-medium text-ink-3">{label}</p>
-      <p className="num mt-1 text-2xl font-semibold tracking-tight">{value}</p>
-      <p className={clsx('mt-1 flex items-center gap-1 text-xs', variation == null ? 'text-ink-3' : variation > 0 ? 'text-ok' : variation < 0 ? 'text-bad' : 'text-ink-3')}>
+    <div className="border-l-[5px] border-ink py-1 pl-3">
+      <p className="text-sm font-medium text-ink-2">{label}</p>
+      <p className="num font-display text-[1.9rem] font-extrabold leading-tight">{value}</p>
+      <p className={clsx('flex items-center gap-1 text-xs font-medium', variation == null ? 'text-ink-3' : variation > 0 ? 'text-ok' : variation < 0 ? 'text-bad' : 'text-ink-3')}>
         <Icon className="size-3.5" aria-hidden />
-        {variation == null ? (hint ?? 'Sem base de comparacao') : `${formatPercent(variation, true)} vs periodo anterior`}
+        {variation == null ? (hint ?? 'Sem base de comparacao') : `${formatPercent(variation, true)} contra o periodo anterior`}
       </p>
     </div>
   )

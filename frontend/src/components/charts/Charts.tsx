@@ -7,10 +7,11 @@ import type { SeriesPoint, TopProduct } from '@/lib/api/types'
 import { Button } from '@/components/ui/primitives'
 
 // Paleta categorica validada (slots 1 e 2 do conjunto de referencia de dataviz).
-export const SERIES_1 = '#2a78d6'
-export const SERIES_2 = '#eb6834'
-const GRID = '#e4e6ef'
-const AXIS = '#6b6f8a'
+// Cores vem de variaveis CSS do tema (claro/escuro); pares validados para daltonismo.
+const SERIES_1 = 'var(--chart-1)'
+const SERIES_2 = 'var(--chart-2)'
+const GRID = 'var(--chart-grid)'
+const AXIS = 'var(--ink-3)'
 
 export function RevenueChart({ current, previous }: { current: SeriesPoint[]; previous?: SeriesPoint[] }) {
   const [table, setTable] = useState(false)
@@ -53,7 +54,7 @@ export function RevenueChart({ current, previous }: { current: SeriesPoint[]; pr
               <Tooltip
                 formatter={(v) => formatBRL(typeof v === 'number' ? v : Number(v))}
                 labelFormatter={(l) => formatDate(String(l))}
-                contentStyle={{ borderRadius: 8, borderColor: GRID, fontSize: 12 }}
+                contentStyle={{ borderRadius: 4, borderColor: GRID, fontSize: 12, background: 'var(--surface)', color: 'var(--ink)' }}
               />
               <Legend iconType="plainline" wrapperStyle={{ fontSize: 12 }} />
               <Line type="monotone" dataKey="atual" name="Periodo atual" stroke={SERIES_1} strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
@@ -77,8 +78,8 @@ export function TopProductsChart({ products, metric }: { products: TopProduct[];
           <CartesianGrid stroke={GRID} horizontal={false} />
           <XAxis type="number" stroke={AXIS} fontSize={12} tickLine={false} tickFormatter={(v: number) => (metric === 'revenue' ? formatBRL(v) : formatInt(v))} />
           <YAxis type="category" dataKey="name" width={150} stroke={AXIS} fontSize={12} tickLine={false} axisLine={false} />
-          <Tooltip formatter={(v) => (metric === 'revenue' ? formatBRL(Number(v)) : `${formatInt(Number(v))} un.`)} contentStyle={{ borderRadius: 8, borderColor: GRID, fontSize: 12 }} />
-          <Bar dataKey="value" name={metric === 'revenue' ? 'Faturamento' : 'Unidades'} fill={SERIES_1} radius={[0, 4, 4, 0]} barSize={18} />
+          <Tooltip formatter={(v) => (metric === 'revenue' ? formatBRL(Number(v)) : `${formatInt(Number(v))} un.`)} contentStyle={{ borderRadius: 4, borderColor: GRID, fontSize: 12, background: 'var(--surface)', color: 'var(--ink)' }} />
+          <Bar dataKey="value" name={metric === 'revenue' ? 'Faturamento' : 'Unidades'} fill={SERIES_1} radius={[0, 3, 3, 0]} barSize={18} />
         </BarChart>
       </ResponsiveContainer>
     </div>

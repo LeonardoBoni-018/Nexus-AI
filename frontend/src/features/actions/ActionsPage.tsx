@@ -7,10 +7,11 @@ import { QueryState } from '@/components/ui/QueryState'
 import { Badge, Button, Card, PageHeader, Select } from '@/components/ui/primitives'
 import { useApiQuery, useStores } from '@/hooks/useApi'
 import { api, errorMessage } from '@/lib/api/client'
-import { useAuth } from '@/lib/auth/AuthContext'
+import { useAuth } from '@/lib/auth/auth-context'
 import type { ActionDetail, ActionSummary, Page } from '@/lib/api/types'
 import { formatDateTime, formatInt } from '@/lib/formatting'
-import { StatusBadge, statusLabel } from './StatusBadge'
+import { StatusBadge } from './StatusBadge'
+import { statusLabel } from './statusLabels'
 
 const STATUSES = ['DRAFT', 'PENDING_APPROVAL', 'APPROVED', 'EXECUTED', 'REJECTED', 'CANCELLED', 'FAILED'] as const
 

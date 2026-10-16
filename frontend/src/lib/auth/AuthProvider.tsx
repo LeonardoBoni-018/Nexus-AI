@@ -1,26 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { ApiError, api, getActiveOrg, onUnauthorized, setActiveOrg } from '@/lib/api/client'
-import type { Me, Membership, Role } from '@/lib/api/types'
+import type { Me } from '@/lib/api/types'
+import { AuthContext, roleAtLeast } from './auth-context'
+import type { AuthState } from './auth-context'
 
-const ORDER: Role[] = ['VIEWER', 'ANALYST', 'MANAGER', 'ADMIN']
-
-export function roleAtLeast(role: Role | undefined, min: Role): boolean {
-  return role !== undefined && ORDER.indexOf(role) >= ORDER.indexOf(min)
-}
-
-interface AuthState {
-  me: Me | null
-  loading: boolean
-  activeOrg: Membership | null
-  login: (email: string, password: string) => Promise<void>
-  logout: () => Promise<void>
-  switchOrg: (organizationId: string) => void
-  can: (min: Role) => boolean
-}
-
-const AuthContext = createContext<AuthState | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const qc = useQueryClient()
@@ -97,8 +82,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-export function useAuth(): AuthState {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth fora do AuthProvider')
-  return ctx
-}

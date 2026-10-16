@@ -7,7 +7,7 @@ import { QueryState } from '@/components/ui/QueryState'
 import { Badge, Button, Card, CardHeader, PageHeader } from '@/components/ui/primitives'
 import { useApiQuery } from '@/hooks/useApi'
 import { api, errorMessage } from '@/lib/api/client'
-import { useAuth } from '@/lib/auth/AuthContext'
+import { useAuth } from '@/lib/auth/auth-context'
 import type { ActionDetail, ActionItem } from '@/lib/api/types'
 import { formatDateTime, formatDecimal, formatInt } from '@/lib/formatting'
 import { StatusBadge } from './StatusBadge'
@@ -43,6 +43,8 @@ function Detail({ action }: { action: ActionDetail }) {
     mutationFn: () => api<ActionDetail>(`/actions/${action.id}`, { method: 'PATCH', body: { quantities: edits } }),
     onSuccess: () => refresh(),
   })
+  // O carimbo so "bate" quando a mudanca de estado foi causada por uma acao da pessoa nesta tela.
+  const landed = run.isSuccess
   const next = new Set(action.nextStatuses)
   const error = run.error ?? save.error
 
@@ -51,7 +53,7 @@ function Detail({ action }: { action: ActionDetail }) {
       <PageHeader
         title={`Reposicao · ${action.storeName}`}
         description={`Criada por ${action.createdByName}${action.createdViaAi ? ' (rascunho gerado pela IA)' : ''} em ${formatDateTime(action.createdAt)}`}
-        actions={<StatusBadge status={action.status} />}
+        actions={<StatusBadge status={action.status} land={landed} />}
       />
       {error && <p role="alert" className="mb-3 rounded-lg bg-bad-bg px-3 py-2 text-sm text-bad">{errorMessage(error)}</p>}
       {action.failureReason && <p role="alert" className="mb-3 rounded-lg bg-bad-bg px-3 py-2 text-sm text-bad">Falha na execucao: {action.failureReason}</p>}

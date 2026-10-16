@@ -1,25 +1,18 @@
-import { Badge } from '@/components/ui/primitives'
+import clsx from 'clsx'
 import type { ActionStatus } from '@/lib/api/types'
+import { STATUS_LABEL } from './statusLabels'
 
-const LABEL: Record<ActionStatus, string> = {
-  DRAFT: 'Rascunho',
-  PENDING_APPROVAL: 'Aguardando aprovacao',
-  APPROVED: 'Aprovada',
-  EXECUTED: 'Executada',
-  REJECTED: 'Rejeitada',
-  CANCELLED: 'Cancelada',
-  FAILED: 'Falhou',
+const COLOR: Record<ActionStatus, string> = {
+  DRAFT: 'text-ink-2',
+  PENDING_APPROVAL: 'text-warn',
+  APPROVED: 'text-brand-700',
+  EXECUTED: 'text-ok',
+  REJECTED: 'text-bad',
+  CANCELLED: 'text-ink-3',
+  FAILED: 'text-bad',
 }
-const TONE: Record<ActionStatus, 'neutral' | 'ok' | 'warn' | 'bad' | 'brand'> = {
-  DRAFT: 'neutral',
-  PENDING_APPROVAL: 'warn',
-  APPROVED: 'brand',
-  EXECUTED: 'ok',
-  REJECTED: 'bad',
-  CANCELLED: 'neutral',
-  FAILED: 'bad',
-}
-export const statusLabel = (s: ActionStatus): string => LABEL[s]
-export function StatusBadge({ status }: { status: ActionStatus }) {
-  return <Badge tone={TONE[status]}>{LABEL[status]}</Badge>
+
+/** Carimbo de status; `land` anima a "batida do carimbo" quando o estado acabou de mudar por acao da pessoa. */
+export function StatusBadge({ status, land }: { status: ActionStatus; land?: boolean }) {
+  return <span className={clsx('stamp', COLOR[status], land && 'stamp-land')}>{STATUS_LABEL[status]}</span>
 }

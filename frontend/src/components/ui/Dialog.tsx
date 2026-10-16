@@ -18,7 +18,7 @@ export function Dialog({ open, onClose, title, children }: { open: boolean; onCl
       aria-labelledby={titleId}
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
-      className="m-auto w-[min(92vw,560px)] rounded-xl border border-line bg-surface p-0 text-ink backdrop:bg-navy-950/50"
+      className="m-auto w-[min(92vw,560px)] rounded-[6px] border border-line border-t-[3px] border-t-ink bg-surface p-0 text-ink backdrop:bg-black/60"
     >
       {open && (
         <div>

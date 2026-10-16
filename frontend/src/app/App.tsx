@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, lazy } from 'react'
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
@@ -14,21 +14,9 @@ const DashboardPage = lazy(() => import('@/features/dashboard/DashboardPage').th
 const InventoryPage = lazy(() => import('@/features/inventory/InventoryPage').then((m) => ({ default: m.InventoryPage })))
 const SalesPage = lazy(() => import('@/features/sales/SalesPage').then((m) => ({ default: m.SalesPage })))
 const SettingsPage = lazy(() => import('@/features/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })))
-import { ApiError } from '@/lib/api/client'
-import { AuthProvider, useAuth } from '@/lib/auth/AuthContext'
-
-export function createQueryClient(): QueryClient {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 30_000,
-        refetchOnWindowFocus: false,
-        // Nao repete erros do cliente (4xx); tenta novamente falhas transitorias uma vez.
-        retry: (count, e) => !(e instanceof ApiError && e.status >= 400 && e.status < 500) && count < 1,
-      },
-    },
-  })
-}
+import { createQueryClient } from './queryClient'
+import { AuthProvider } from '@/lib/auth/AuthProvider'
+import { useAuth } from '@/lib/auth/auth-context'
 
 /** Protecao de rota apenas para UX; a autorizacao real e feita no backend. */
 export function RequireAuth() {
@@ -64,7 +52,7 @@ export function AppRoutes() {
   )
 }
 
-export default function App({ client = createQueryClient() }: { client?: QueryClient }) {
+export default function App({ client = createQueryClient() }: { client?: ReturnType<typeof createQueryClient> }) {
   return (
     <QueryClientProvider client={client}>
       <AuthProvider>

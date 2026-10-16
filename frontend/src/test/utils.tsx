@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { vi } from 'vitest'
-import { AuthProvider } from '@/lib/auth/AuthContext'
+import { AuthProvider } from '@/lib/auth/AuthProvider'
 
 export type Handler = (url: string, init: RequestInit) => { status?: number; body?: unknown } | undefined
 
