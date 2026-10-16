@@ -8,8 +8,8 @@ cd frontend && npm run lint && npm run typecheck && npm test && npm run build
 Nenhuma chamada de IA paga ocorre na suite: o provedor e simulado (`ScriptedLlm`) ou ausente (`UnconfiguredLlmClient`).
 
 ## Resultados reais da ultima execucao (2026-10-16, Windows 11, Java 17.0.12, Node 24)
-- **Backend**: `./mvnw verify` → **39 testes, 0 falhas**, `BUILD SUCCESS`.
-- **Frontend**: Vitest → **21 testes, 0 falhas**; `tsc -b` (strict) sem erros; `vite build` ok; `oxlint` com 4 avisos de Fast Refresh (apenas DX em desenvolvimento).
+- **Backend**: `./mvnw verify` → **43 testes, 0 falhas**, `BUILD SUCCESS` (inclui sessao JDBC com cookie HttpOnly, HSTS, token de metricas e politica de aprovador distinto).
+- **Frontend**: Vitest → **21 testes, 0 falhas**; `tsc -b` (strict) sem erros; `vite build` ok; `oxlint` sem avisos.
 - **Verificacao manual no navegador** (backend local + Vite): login, dashboard com dados reais, criacao → envio → aprovacao → execucao de proposta e consulta de auditoria funcionaram.
 
 ## Backend (JUnit 5 / MockMvc / Spring Boot Test)
@@ -30,7 +30,7 @@ Os demais testes rodam em H2 (modo PostgreSQL) com banco em memoria unico por co
 Formatacao (BRL, %, datas, fuso), cliente HTTP (cookies, CSRF, organizacao, Problem Details, 401, rede), roteamento protegido, validacao e erro do login, fluxo de aprovacao por perfil (gerente x analista, rejeicao com motivo, erro de transicao), estados loading/vazio/erro/sucesso (`QueryState`).
 
 ## E2E (Playwright) — `frontend/e2e`
-`npm run e2e` (requer `npx playwright install chromium` uma vez). O Playwright sobe: um **provedor de LLM simulado** (`e2e/mock-llm.mjs`, formato OpenAI), o **backend real** (perfil local, H2 em memoria, seed demo, `AI_PROVIDER=openai` apontando para o mock — exercita o adaptador real) e o Vite. Resultado da ultima execucao: **3 testes passando (~31 s)**:
+`npm run e2e` (requer `npx playwright install chromium` uma vez). O Playwright sobe: um **provedor de LLM simulado** (`e2e/mock-llm.mjs`, formato OpenAI), o **backend real** (perfil local, H2 em memoria, seed demo, `AI_PROVIDER=openai` apontando para o mock — exercita o adaptador real) e o Vite. Resultado da ultima execucao: **8 testes passando (~2 min)**, incluindo **auditoria de acessibilidade axe (WCAG 2 A/AA) em 10 telas nos temas claro e escuro**, layout sem rolagem horizontal em 375 px e 768 px, alvos de toque >= 44 px e alternancia/persistencia de tema (`a11y-responsive.spec.ts`). Fluxo de negocio (`full-flow.spec.ts`):
 1. Credenciais invalidas exibem erro; rota protegida redireciona ao login.
 2. Fluxo completo: login (analista) → dashboard com dados reais → busca no catalogo → assistente cria rascunho via ferramentas (evidencias visiveis) → analista envia, nao aprova → login (gerente, outro contexto) aprova e executa → auditoria mostra CREATED/SUBMITTED/APPROVED/EXECUTED/AI_INTERACTION → movimentacao de reposicao no estoque.
 3. Isolamento: usuario de outra organizacao nao ve a proposta.

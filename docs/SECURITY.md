@@ -5,7 +5,12 @@
 - **CSRF**: `CookieCsrfTokenRepository` (`XSRF-TOKEN` → header `X-XSRF-TOKEN`) em todas as mutacoes, inclusive login. Fixacao de sessao mitigada (`changeSessionId`).
 - Senhas: BCrypt (custo 10); minimo de 10 caracteres no cadastro. Mensagem de login nao distingue usuario inexistente de senha errada. Limite de 10 tentativas/5 min por e-mail+IP (em memoria; ver riscos).
 - Logout invalida a sessao no servidor.
-- Riscos conhecidos: sessoes em memoria (perdidas em reinicio; sem escala horizontal sem sessao compartilhada); sem recuperacao de senha, MFA ou bloqueio de conta persistente.
+- **Sessoes persistidas no banco** (Spring Session JDBC, tabelas `spring_session*` da migration V2): sobrevivem a reinicios e permitem varias instancias. Cookie `NEXUSSESSION` definido explicitamente (HttpOnly, SameSite=Lax, Secure configuravel) — o padrao do Spring Session emitiria um cookie `SESSION` sem HttpOnly; `JdbcSessionTest` garante isso.
+- **HSTS** (1 ano, includeSubDomains) enviado em requisicoes HTTPS (a aplicacao honra `X-Forwarded-Proto`; o nginx tambem emite o header somente quando o proxy a frente terminou TLS).
+- **Metricas**: `/actuator/prometheus` e `/actuator/metrics` exigem o header `X-Metrics-Token` (`METRICS_TOKEN`); sem token configurado ficam bloqueados. O token nao abre a API de negocio e usuarios comuns recebem 403.
+- **Separacao de funcoes** opcional (`REQUIRE_SEPARATE_APPROVER=true`): quem criou a proposta nao pode aprova-la (`403 SELF_APPROVAL_FORBIDDEN`).
+- **Dependabot** semanal para Maven, npm, Docker e GitHub Actions.
+- Riscos conhecidos: o rate limit de login/IA continua em memoria (por instancia); sem recuperacao de senha, MFA ou bloqueio de conta persistente.
 
 ## Autorizacao e isolamento
 - Papeis `VIEWER < ANALYST < MANAGER < ADMIN` verificados **no servidor** (`OrgContext.require`).
@@ -26,4 +31,4 @@ Ver `docs/AI_AGENT.md`: catalogo fechado de ferramentas, sem SQL livre, sem ferr
 - Container do backend roda como usuario nao root.
 
 ## Pendencias de seguranca (nao implementadas)
-Rate limit distribuido, MFA, recuperacao de senha, retencao/anonimizacao (LGPD), varredura automatica de dependencias (ex.: Dependabot/OWASP) no CI, headers HSTS (configurar no proxy TLS), exposicao autenticada de metricas Prometheus.
+Rate limit distribuido, MFA, recuperacao de senha (exige envio de e-mail), retencao/anonimizacao (LGPD), varredura de vulnerabilidades no CI (Dependabot ja abre PRs de atualizacao).

@@ -65,6 +65,7 @@ Demais variaveis: `AI_BASE_URL`, `AI_MAX_TOOL_CALLS` (8), `AI_REQUEST_TIMEOUT` (
 ```bash
 cd backend  && ./mvnw verify          # JUnit 5 (inclui PostgreSQL 16 embarcado; sem Docker; nenhuma chamada paga de IA)
 cd frontend && npm run lint && npm run typecheck && npm test && npm run build
+cd frontend && npx playwright install chromium && npm run e2e   # E2E + acessibilidade (sobe backend, mock de LLM e Vite)
 ```
 
 ## Estrutura

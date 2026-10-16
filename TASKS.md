@@ -11,7 +11,7 @@ Legenda: ✅ concluido e verificado · 🟡 parcial · ⏳ pendente · ⛔ bloqu
 | D. Frontend e experiencia analitica | ✅ |
 | E. IA e ferramentas | ✅ com provedor simulado · ⛔ validacao com provedor real (precisa de `AI_API_KEY`) |
 | F. Acoes, aprovacao e auditoria | ✅ |
-| G. Seguranca, testes, robustez | ✅ (backend 39, frontend 21, E2E 3) |
+| G. Seguranca, testes, robustez | ✅ (backend 43, frontend 21, E2E 8) |
 | H. Deploy, docs, validacao final | 🟡 docs ✅ · deploy em nuvem ⏳ · Docker/CI nao executados |
 
 ## Criterios de aceitacao (secao 19 do prompt)
@@ -30,20 +30,18 @@ Legenda: ✅ concluido e verificado · 🟡 parcial · ⏳ pendente · ⛔ bloqu
 13. Duplicidade impedida/idempotente — ✅ (teste de concorrencia)
 14. Auditoria das operacoes criticas — ✅
 15. Falha do provedor de IA nao derruba o resto — ✅
-16. Testes criticos automatizados e executados — ✅ incluindo E2E Playwright (3)
+16. Testes criticos automatizados e executados — ✅ incluindo E2E Playwright (8)
 17. Sem erros de compilacao ignorados — ✅
 18. Documentacao corresponde ao comportamento — ✅ (revisada ao final)
-19. Interface em desktop/tablet/celular — 🟡 layout responsivo implementado (menu off-canvas, tabelas com rolagem); verificado visualmente apenas em viewport ~800 px
+19. Interface em desktop/tablet/celular — ✅ verificada por capturas e teste automatizado em 1440, 768 e 375 px, temas claro e escuro
 20. Sem credenciais reais no repositorio — ✅ (somente senha demo documentada)
 
 ## Pendentes
 - ⛔ Configurar `AI_PROVIDER/AI_MODEL/AI_API_KEY` e fazer teste de fumaca real do assistente.
 - ⏳ Executar `docker compose up --build` e o workflow de CI (Docker Desktop precisa estar ativo; CI precisa de remoto GitHub).
-- ⏳ Verificacao visual em mobile (375 px) e tablet; auditoria de acessibilidade com leitor de tela.
-- ⏳ Tema escuro; avisos `react-refresh/only-export-components` (DX).
+- ⏳ Teste de acessibilidade manual com leitor de tela (axe automatizado ja passa em AA).
 - ⏳ P1: streaming SSE, notificacoes em tempo real, exportacao de relatorios, RAG, deteccao proativa de anomalias, recuperacao de senha.
-- ⏳ Seguranca: sessoes/rate limit distribuidos, MFA, varredura de dependencias, HSTS no proxy, metricas autenticadas.
-- ⏳ Separacao de funcoes na aprovacao (4 olhos) como politica configuravel.
+- ⏳ Seguranca: rate limit distribuido, MFA, recuperacao de senha (precisa de e-mail/SMTP: depende de conexao externa), varredura de vulnerabilidades no CI.
 
 ## Concluido (resumo)
 Backend modular (identity, security, catalog, sales, analytics, alerts, actions, ai, audit, demo), migrations Flyway, seed demo consistente, API REST com Problem Details, agente com 10 ferramentas, adaptadores Anthropic/OpenAI, frontend completo (10 telas), testes automatizados, documentacao, Dockerfiles/Compose/CI.

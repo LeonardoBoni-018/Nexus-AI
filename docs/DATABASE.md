@@ -18,6 +18,7 @@ O esquema e escrito em SQL compativel com PostgreSQL **e** H2 (modo PostgreSQL, 
 | `conversations`, `chat_messages` | por usuario **e** organizacao |
 | `ai_tool_executions` | ferramenta, argumentos (truncados), resumo do resultado (500 chars), status, duracao |
 | `proposed_actions`, `action_items`, `action_approvals` | estado, `created_via_ai`, `conversation_id`, `version`; itens com estoque/media/cobertura/sugerido/aprovado |
+| `spring_session`, `spring_session_attributes` | Sessoes HTTP (Spring Session JDBC, migration V2) |
 | `audit_events` | org, usuario, tipo, entidade, detalhes (sem segredos), `request_id` |
 
 ## Indices (guiados pelas consultas)
