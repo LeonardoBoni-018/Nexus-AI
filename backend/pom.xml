@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>io.zonky.test.postgres</groupId>
 			<artifactId>embedded-postgres-binaries-linux-amd64</artifactId>
-			<version>16.15.0</version>
+			<version>18.6.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
