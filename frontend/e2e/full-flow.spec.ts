@@ -10,7 +10,7 @@ async function login(browser: Browser, email: string): Promise<Page> {
   await page.getByLabel('E-mail').fill(email)
   await page.getByLabel('Senha').fill(DEMO_PASSWORD)
   await page.getByRole('button', { name: 'Entrar' }).click()
-  await expect(page.getByRole('heading', { name: 'Visao geral' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Visao geral', includeHidden: true })).toBeVisible()
   return page
 }
 
@@ -29,7 +29,7 @@ test('fluxo completo: dashboard, assistente, proposta, aprovacao, execucao e aud
   await expect(analyst.getByText('Dados de demonstracao')).toBeVisible()
   await expect(analyst.getByText('Faturamento', { exact: true }).first()).toBeVisible()
   await expect(analyst.getByText(/R\$\s?[\d.]+,\d{2}/).first()).toBeVisible()
-  await expect(analyst.getByRole('heading', { name: 'Alertas operacionais' })).toBeVisible()
+  await expect(analyst.getByRole('heading', { name: 'Alertas', exact: true })).toBeVisible()
   await expect(analyst.getByRole('link', { name: 'Auditoria', exact: true })).toHaveCount(0) // papel sem acesso
 
   // 2) Consulta de produtos
@@ -39,7 +39,7 @@ test('fluxo completo: dashboard, assistente, proposta, aprovacao, execucao e aud
   await expect(analyst.getByRole('cell', { name: /Agua Mineral 500ml/ })).toBeVisible()
 
   // 3) Assistente (provedor simulado) cria rascunho via ferramentas reais
-  await analyst.getByRole('link', { name: 'Assistente de IA' }).click()
+  await analyst.getByRole('link', { name: 'Assistente' }).click()
   await expect(analyst.getByText('nao esta configurada')).toHaveCount(0)
   await analyst.getByLabel('Mensagem').fill('Analise o estoque da Loja Centro e prepare uma proposta de reposicao.')
   await analyst.getByRole('button', { name: 'Enviar' }).click()
@@ -84,6 +84,6 @@ test('fluxo completo: dashboard, assistente, proposta, aprovacao, execucao e aud
 test('isolamento: usuario de outra organizacao nao ve a proposta', async ({ browser }) => {
   const other = await login(browser, 'admin@casaecia.demo')
   await expect(other.getByText('Casa & Cia (DEMO)').first()).toBeVisible()
-  await other.getByRole('link', { name: 'Acoes e aprovacoes' }).click()
+  await other.getByRole('link', { name: 'Acoes', exact: true }).click()
   await expect(other.getByText('Nenhuma proposta')).toBeVisible()
 })
