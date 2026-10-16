@@ -22,9 +22,14 @@ spring:
   threads:
     virtual:
       enabled: false
+  session:
+    jdbc:
+      initialize-schema: never   # tabelas criadas pela migration V2
+      cleanup-cron: "0 */10 * * * *"
 
 server:
   port: ${PORT:8080}
+  forward-headers-strategy: framework
   error:
     include-stacktrace: never
     include-message: never
@@ -63,6 +68,10 @@ app:
   cors-allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
   demo-seed: ${DEMO_SEED:false}
   max-query-days: 400
+  # Separacao de funcoes: quem criou a proposta nao pode aprova-la.
+  require-separate-approver: ${REQUIRE_SEPARATE_APPROVER:false}
+  # Token para scrape de /actuator/prometheus e /actuator/metrics (header X-Metrics-Token). Vazio = bloqueado.
+  metrics-token: ${METRICS_TOKEN:}
   ai:
     provider: ${AI_PROVIDER:}          # anthropic | openai (compativel com OpenAI)
     model: ${AI_MODEL:}

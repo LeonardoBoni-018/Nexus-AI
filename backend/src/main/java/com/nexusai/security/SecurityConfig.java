@@ -46,6 +46,23 @@ public class SecurityConfig implements WebMvcConfigurer {
         resolvers.add(orgContextResolver);
     }
 
+    /**
+     * Cookie da sessao persistida (Spring Session): HttpOnly, SameSite=Lax e Secure configuravel. Definido
+     * explicitamente para nao depender dos padroes do Spring Session (cookie SESSION sem HttpOnly).
+     */
+    @Bean
+    org.springframework.session.web.http.CookieSerializer cookieSerializer(
+            @org.springframework.beans.factory.annotation.Value("${server.servlet.session.cookie.secure:true}") boolean secure) {
+        org.springframework.session.web.http.DefaultCookieSerializer c =
+                new org.springframework.session.web.http.DefaultCookieSerializer();
+        c.setCookieName("NEXUSSESSION");
+        c.setCookiePath("/");
+        c.setUseHttpOnlyCookie(true);
+        c.setSameSite("Lax");
+        c.setUseSecureCookie(secure);
+        return c;
+    }
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
@@ -64,7 +81,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, SecurityContextRepository repo) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, SecurityContextRepository repo, AppProperties props) throws Exception {
         CookieCsrfTokenRepository csrfRepo = CookieCsrfTokenRepository.withHttpOnlyFalse();
         csrfRepo.setCookieName("XSRF-TOKEN");
         csrfRepo.setHeaderName("X-XSRF-TOKEN");
@@ -77,7 +94,10 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
             .securityContext(sc -> sc.securityContextRepository(repo))
             .sessionManagement(sm -> sm.sessionFixation(f -> f.changeSessionId()))
+            .addFilterBefore(new MetricsTokenFilter(props.metricsToken()),
+                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .headers(h -> h
+                .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31_536_000))
                 .contentTypeOptions(Customizer.withDefaults())
                 .frameOptions(f -> f.deny())
                 .referrerPolicy(r -> r.policy(
@@ -87,6 +107,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/register").permitAll()
                 .requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/actuator/prometheus", "/actuator/metrics", "/actuator/metrics/**").hasRole("METRICS")
                 .requestMatchers("/actuator/**").denyAll()
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll())

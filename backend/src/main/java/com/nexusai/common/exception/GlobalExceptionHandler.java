@@ -50,6 +50,22 @@ public class GlobalExceptionHandler {
         return problem(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "Requisicao malformada ou parametro invalido");
     }
 
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    ProblemDetail noResource(Exception e) {
+        return problem(HttpStatus.NOT_FOUND, "NOT_FOUND", "Recurso nao encontrado");
+    }
+
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    ProblemDetail method(Exception e) {
+        return problem(HttpStatus.METHOD_NOT_ALLOWED, "METHOD_NOT_ALLOWED", "Metodo HTTP nao suportado");
+    }
+
+    @ExceptionHandler({org.springframework.web.HttpMediaTypeNotSupportedException.class,
+        org.springframework.web.HttpMediaTypeNotAcceptableException.class})
+    ProblemDetail mediaType(Exception e) {
+        return problem(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "UNSUPPORTED_MEDIA_TYPE", "Tipo de conteudo nao suportado");
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     ProblemDetail denied(AccessDeniedException e) {
         return problem(HttpStatus.FORBIDDEN, "FORBIDDEN", "Acesso negado");

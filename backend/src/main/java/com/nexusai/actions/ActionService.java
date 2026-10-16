@@ -7,6 +7,7 @@ import com.nexusai.audit.AuditService;
 import com.nexusai.catalog.InventoryMovement;
 import com.nexusai.catalog.InventoryService;
 import com.nexusai.common.exception.ApiException;
+import com.nexusai.config.AppProperties;
 import com.nexusai.identity.Role;
 import com.nexusai.security.OrgContext;
 import jakarta.persistence.LockModeType;
@@ -62,10 +63,11 @@ public class ActionService {
     private final AuditService audit;
     private final Clock clock;
     private final TransactionTemplate requiresNew;
+    private final AppProperties props;
 
     public ActionService(ActionRepository actions, ItemRepository items, ApprovalRepository approvals,
             InventoryService inventory, ReplenishmentPlanner planner, AnalyticsService analytics, AuditService audit,
-            Clock clock, PlatformTransactionManager txManager) {
+            Clock clock, PlatformTransactionManager txManager, AppProperties props) {
         this.actions = actions;
         this.items = items;
         this.approvals = approvals;
@@ -74,6 +76,7 @@ public class ActionService {
         this.analytics = analytics;
         this.audit = audit;
         this.clock = clock;
+        this.props = props;
         this.requiresNew = new TransactionTemplate(txManager);
         this.requiresNew.setPropagationBehavior(org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
@@ -153,6 +156,10 @@ public class ActionService {
     public void approve(OrgContext ctx, UUID id, String reason) {
         ctx.require(Role.MANAGER);
         ProposedAction a = load(ctx, id);
+        if (props.requireSeparateApprover() && a.getCreatedBy().equals(ctx.userId())) {
+            throw new ApiException(org.springframework.http.HttpStatus.FORBIDDEN, "SELF_APPROVAL_FORBIDDEN",
+                    "Politica da organizacao: outra pessoa precisa aprovar esta proposta");
+        }
         Instant now = Instant.now(clock);
         a.transitionTo(Status.APPROVED, now);
         approvals.save(new ActionApproval(id, ctx.userId(), Decision.APPROVED, reason, now));

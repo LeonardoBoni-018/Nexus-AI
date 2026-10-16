@@ -11,6 +11,8 @@ public record AppProperties(
         String corsAllowedOrigins,
         boolean demoSeed,
         int maxQueryDays,
+        boolean requireSeparateApprover,
+        String metricsToken,
         Ai ai) {
 
     public ZoneId zone() {

@@ -1,4 +1,7 @@
 spring:
+  autoconfigure:
+    # Testes usam MockHttpSession; JdbcSessionTest reativa o armazenamento JDBC (spring.autoconfigure.exclude=).
+    exclude: org.springframework.boot.session.jdbc.autoconfigure.JdbcSessionAutoConfiguration
   datasource:
     url: jdbc:h2:mem:nexustest-${random.uuid};MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
     username: sa
@@ -13,6 +16,7 @@ server:
 app:
   registration-enabled: true
   demo-seed: true
+  metrics-token: test-metrics-token
   ai:
     provider: ""
     api-key: ""
